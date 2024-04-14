@@ -4,6 +4,8 @@ import {
   text,
   primaryKey,
   integer,
+  serial,
+  decimal,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "next-auth/adapters";
 
@@ -39,3 +41,19 @@ export const accounts = pgTable(
     }),
   })
 );
+
+export const transactions = pgTable("transaction", {
+  id: serial("id").primaryKey(),
+  name: text("name"),
+  price: decimal("price", {
+    precision: 11,
+    scale: 2,
+  }).notNull(),
+  date: timestamp("date", { mode: "date" }),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  //TODO: pensare a come implementare i campi
+  // accountId / account
+  // categoryId / category
+});

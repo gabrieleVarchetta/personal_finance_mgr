@@ -11,15 +11,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { setErrorMap, z } from "zod";
-import { LoginSchema } from "../../schemas";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { FormError } from "../form-error";
-import { FormSuccess } from "../form-success";
-import { login } from "../../actions/login";
+import { LoginSchema } from "@/schemas";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { FormError } from "@/components/form-error";
+import { FormSuccess } from "@/components/form-success";
+import { login } from "@/actions/login";
 import { startTransition, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export function LoginForm() {
+  const searchParams = useSearchParams();
+  const urlError =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Email already in use with different provider!"
+      : "";
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
 
@@ -82,7 +88,7 @@ export function LoginForm() {
             />
           </div>
           <FormSuccess message={success} />
-          <FormError message={error} />
+          <FormError message={error || urlError} />
           <Button type="submit" className="w-full">
             Login
           </Button>

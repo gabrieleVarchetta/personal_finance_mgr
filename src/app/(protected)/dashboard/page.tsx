@@ -38,8 +38,6 @@ export default async function Dashboard() {
     redirect("/api/auth/signin");
   }
 
-  const transactions = await fetch("/api/transactions");
-
   return (
     <Card>
       <CardHeader>

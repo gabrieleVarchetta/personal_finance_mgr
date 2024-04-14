@@ -7,8 +7,22 @@ import db, { getUserByEmail } from "@/lib/drizzle";
 import { LoginSchema } from "@/schemas";
 
 import bcrypt from "bcryptjs";
+import { users } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
+  pages: {
+    signIn: "auth/login",
+    error: "auth/error",
+  },
+  events: {
+    async linkAccount({ user }) {
+      await db
+        .update(users)
+        .set({ emailVerified: new Date() })
+        .where(eq(users.id, user.id ?? ""));
+    },
+  },
   callbacks: {
     async jwt({ token }) {
       return token;
@@ -23,7 +37,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db),
   session: { strategy: "jwt" },
   providers: [
-    Google,
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
     Credentials({
       async authorize(credentials) {
         const validatedFields = LoginSchema.safeParse(credentials);

@@ -1,11 +1,12 @@
 "use server";
 import { z } from "zod";
-import bcrypt from "bcryptjs";
 
 import { RegisterSchema } from "@/schemas";
 import db, { getUserByEmail } from "@/lib/drizzle";
 import { users } from "@/lib/schema";
 import { createId } from "@paralleldrive/cuid2";
+
+import bcrypt from "bcryptjs";
 
 export async function register(values: z.infer<typeof RegisterSchema>) {
   const validatedFields = RegisterSchema.safeParse(values);

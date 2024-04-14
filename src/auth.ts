@@ -5,6 +5,7 @@ import Credentials from "next-auth/providers/credentials";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import db, { getUserByEmail } from "@/lib/drizzle";
 import { LoginSchema } from "@/schemas";
+
 import bcrypt from "bcryptjs";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({

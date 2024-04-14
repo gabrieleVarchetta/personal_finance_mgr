@@ -1,0 +1,1 @@
+ALTER TABLE "user" ALTER COLUMN "id" SET DEFAULT 'otowwz7vjh9xfiw09qjhp9kf';

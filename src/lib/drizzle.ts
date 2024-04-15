@@ -1,7 +1,8 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
+import { Transactions } from "@/types";
 
 const sql = neon(process.env.NEON_DATABASE_URL!);
 const db = drizzle(sql, { schema });
@@ -30,3 +31,17 @@ export async function getUserById(id: string) {
   }
 }
 export default db;
+
+export async function getTransactionsByUserId(id: string) {
+  try {
+    const trxs = await db
+      .select()
+      .from(schema.transactions)
+      .where(eq(schema.transactions.userId, id))
+      .orderBy(desc(schema.transactions.date));
+
+    return trxs as Transactions;
+  } catch {
+    return null;
+  }
+}

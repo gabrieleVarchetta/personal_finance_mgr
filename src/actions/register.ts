@@ -16,13 +16,14 @@ export async function register(values: z.infer<typeof RegisterSchema>) {
   }
 
   const { name, email, password } = validatedFields.data;
-  const hashedPsw = await bcrypt.hash(password, 10);
 
   const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
     return { error: "Email already in use" };
   }
+
+  const hashedPsw = await bcrypt.hash(password, 10);
 
   await db.insert(users).values({
     id: createId(),

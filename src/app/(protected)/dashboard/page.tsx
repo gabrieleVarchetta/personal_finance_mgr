@@ -30,6 +30,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { auth } from "@/auth";
+import { transactions } from "@/lib/schema";
+import { getTransactionsByUserId } from "@/lib/drizzle";
+import TransactionItem from "@/components/dashboard/transaction-item";
 
 export default async function Dashboard() {
   const session = await auth();
@@ -37,6 +40,8 @@ export default async function Dashboard() {
   if (!session || !session.user) {
     redirect("/api/auth/signin");
   }
+
+  const transactions = await getTransactionsByUserId(session.user.id ?? "");
 
   return (
     <Card>
@@ -61,34 +66,18 @@ export default async function Dashboard() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell className="font-medium">
-                Laser Lemonade Machine
-              </TableCell>
-              <TableCell>
-                <Badge variant="outline">Draft</Badge>
-              </TableCell>
-              <TableCell>$499.99</TableCell>
-              <TableCell className="hidden md:table-cell">25</TableCell>
-              <TableCell className="hidden md:table-cell">
-                2023-07-12 10:42 AM
-              </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button aria-haspopup="true" size="icon" variant="ghost">
-                      <MoreHorizontal className="h-4 w-4" />
-                      <span className="sr-only">Toggle menu</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                    <DropdownMenuItem>Delete</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
+            {transactions &&
+              transactions.map((trx, idx) => {
+                return (
+                  <TransactionItem
+                    name={trx.name!}
+                    trxId={trx.id!}
+                    key={`trx-${trx.id}-${idx}`}
+                    date={trx.date!}
+                    price={trx.price!}
+                  />
+                );
+              })}
           </TableBody>
         </Table>
       </CardContent>

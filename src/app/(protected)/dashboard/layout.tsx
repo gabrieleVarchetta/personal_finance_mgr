@@ -9,7 +9,7 @@ export default function Layout({
   return (
     <html lang="en">
       <body>
-        <main className="flex">
+        <main className="flex w-full">
           <SideNav>
             <UserCard />
           </SideNav>

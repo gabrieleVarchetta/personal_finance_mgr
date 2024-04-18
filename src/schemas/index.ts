@@ -20,3 +20,23 @@ export const RegisterSchema = z.object({
     message: "Name is required",
   }),
 });
+
+export const TransactionSchema = z.object({
+  name: z
+    .string({
+      required_error: "Name is required",
+    })
+    .max(32, {
+      message: "Maximum 32 characters",
+    }),
+  price: z
+    .string()
+    .regex(/^\d+(\.\d{1,2})?$/)
+    .refine(
+      (value) => {
+        const parsedValue = parseFloat(value);
+        return !isNaN(parsedValue) && parsedValue >= 0.01;
+      },
+      { message: "Invalid price" }
+    ),
+});

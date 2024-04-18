@@ -5,21 +5,19 @@ import {
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuItem,
-} from "@radix-ui/react-dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "../ui/button";
 import { TableCell, TableRow } from "../ui/table";
 import { Badge } from "@/components/ui/badge";
 
 interface TransactionItemProps {
-  trxId: number;
   key: string;
   name: string;
   price: string;
   date: Date;
 }
 export default function TransactionItem({
-  trxId,
   key,
   name,
   price,

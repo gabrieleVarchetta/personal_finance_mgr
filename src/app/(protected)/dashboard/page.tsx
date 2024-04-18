@@ -33,6 +33,7 @@ import { auth } from "@/auth";
 import { transactions } from "@/lib/schema";
 import { getTransactionsByUserId } from "@/lib/drizzle";
 import TransactionItem from "@/components/dashboard/transaction-item";
+import AddTransactionPopup from "./_components/add-transaction-popup";
 
 export default async function Dashboard() {
   const session = await auth();
@@ -46,8 +47,15 @@ export default async function Dashboard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Transactions</CardTitle>
-        <CardDescription>List of your transactions.</CardDescription>
+        <div className="flex justify-between">
+          <div>
+            <CardTitle>Transactions</CardTitle>
+            <CardDescription>List of your transactions.</CardDescription>
+          </div>
+          <div>
+            <AddTransactionPopup userId={session.user.id ?? ""} />
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <Table>
@@ -71,7 +79,6 @@ export default async function Dashboard() {
                 return (
                   <TransactionItem
                     name={trx.name!}
-                    trxId={trx.id!}
                     key={`trx-${trx.id}-${idx}`}
                     date={trx.date!}
                     price={trx.price!}

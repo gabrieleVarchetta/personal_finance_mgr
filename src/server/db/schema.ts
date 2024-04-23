@@ -42,6 +42,25 @@ export const accounts = pgTable(
   })
 );
 
+export const moneyAccounts = pgTable("moneyaccount", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+});
+
+export const categories = pgTable("category", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
+  type: text("type", { enum: ["Expense", "Income"] }).notNull(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+});
+
 export const transactions = pgTable("transaction", {
   id: serial("id").primaryKey(),
   name: text("name"),
@@ -53,7 +72,13 @@ export const transactions = pgTable("transaction", {
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  //TODO: pensare a come implementare i campi
-  // accountId / account
-  // categoryId / category
+  type: text("type", { enum: ["Expense", "Income", "Transfer"] }),
+  moneyAccountId: integer("money_account_id")
+    .notNull()
+    .references(() => moneyAccounts.id, { onDelete: "no action" }),
+  moneyAccountName: text("money_account_name").notNull(),
+  categoryId: integer("category_id")
+    .notNull()
+    .references(() => categories.id, { onDelete: "no action" }),
+  categoryName: text("category_name").notNull(),
 });

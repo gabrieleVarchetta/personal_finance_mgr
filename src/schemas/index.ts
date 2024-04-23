@@ -39,4 +39,6 @@ export const TransactionSchema = z.object({
       },
       { message: "Invalid price" }
     ),
+  account: z.string({ required_error: "Select an account" }),
+  category: z.string(),
 });

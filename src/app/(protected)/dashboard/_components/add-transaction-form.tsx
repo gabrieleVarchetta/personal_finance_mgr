@@ -24,10 +24,27 @@ import { FormSuccess } from "@/components/form-success";
 import { FormError } from "@/components/form-error";
 import { z } from "zod";
 import { useState } from "react";
-import { addTransaction } from "@/actions/addTransaction";
-import { Button } from "@/components/ui/button";
+import { addTransaction } from "@/actions/transactions";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Account, Category } from "@/types";
 
-export default function AddTransactionForm({ userId }: { userId: string }) {
+export default function AddTransactionForm({
+  userId,
+  accounts,
+  categories,
+  type,
+}: {
+  userId: string | undefined;
+  accounts: Account[] | null;
+  categories: Category[] | null;
+  type: "Income" | "Expense";
+}) {
   const [success, setSuccess] = useState<string>("");
   const [error, setError] = useState<string>("");
 
@@ -36,13 +53,23 @@ export default function AddTransactionForm({ userId }: { userId: string }) {
     defaultValues: {
       name: "",
       price: "",
+      account: "",
+      category: "",
     },
   });
   function onSubmit(values: z.infer<typeof TransactionSchema>) {
     setError("");
     setSuccess("");
 
-    addTransaction(values, userId).then((data) => {
+    const accountId = accounts?.find(
+      (account) => account.name == values.account
+    )?.id;
+
+    const categoryId = categories?.find(
+      (category) => category.name == values.category
+    )?.id;
+
+    addTransaction(values, type, userId, accountId, categoryId).then((data) => {
       setError(data.error ?? "");
       setSuccess(data.message ?? "");
     });
@@ -82,6 +109,64 @@ export default function AddTransactionForm({ userId }: { userId: string }) {
                     <FormControl>
                       <Input {...field} placeholder="12.99" type="text" />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="account"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel> Account </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select an account" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {accounts?.map((account, index) => {
+                          return (
+                            <SelectItem key={index} value={account.name}>
+                              {account.name}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel> Category </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories?.map((category, index) => {
+                          return (
+                            <SelectItem key={index} value={category.name}>
+                              {category.name}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

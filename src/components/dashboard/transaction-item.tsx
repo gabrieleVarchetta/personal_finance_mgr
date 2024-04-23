@@ -1,4 +1,5 @@
-"use client";
+// "use client";
+
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -10,30 +11,29 @@ import { MoreHorizontal } from "lucide-react";
 import { Button } from "../ui/button";
 import { TableCell, TableRow } from "../ui/table";
 import { Badge } from "@/components/ui/badge";
+import { deleteTransaction } from "@/actions/transactions";
+import { Transaction } from "@/types";
 
 interface TransactionItemProps {
-  key: string;
-  name: string;
-  price: string;
-  date: Date;
+  transaction: Transaction;
 }
-export default function TransactionItem({
-  key,
-  name,
-  price,
-  date,
-}: TransactionItemProps) {
+export default function TransactionItem({ transaction }: TransactionItemProps) {
+  const deleteTransactionById = deleteTransaction.bind(null, transaction.id);
+
   return (
-    <TableRow key={key}>
-      <TableCell className="font-medium">{name}</TableCell>
+    <TableRow>
+      <TableCell className="font-medium">{transaction.name}</TableCell>
       <TableCell>
-        <Badge variant="outline">Draft</Badge>
+        <Badge variant="outline">{transaction.category}</Badge>
       </TableCell>
-      <TableCell>${price}</TableCell>
-      <TableCell className="hidden md:table-cell">25</TableCell>
+      <TableCell>${transaction.price}</TableCell>
       <TableCell className="hidden md:table-cell">
-        {date.toDateString()}
+        {transaction.account}
       </TableCell>
+      <TableCell className="hidden md:table-cell">
+        {transaction.date.toDateString()}
+      </TableCell>
+      <TableCell className="hidden md:table-cell">{transaction.type}</TableCell>
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -45,7 +45,11 @@ export default function TransactionItem({
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
+            <form action={deleteTransactionById}>
+              <button className="w-full">
+                <DropdownMenuItem>Delete</DropdownMenuItem>
+              </button>
+            </form>
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>

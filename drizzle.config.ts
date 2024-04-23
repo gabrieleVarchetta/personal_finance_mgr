@@ -6,7 +6,7 @@ dotenv.config({
 });
 
 export default {
-  schema: "./src/lib/schema.ts",
+  schema: "./src/server/db/schema.ts",
   out: "./src/migrations",
   driver: "pg",
   dbCredentials: {

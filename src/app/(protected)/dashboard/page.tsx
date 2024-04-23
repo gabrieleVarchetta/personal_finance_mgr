@@ -1,10 +1,5 @@
 import { redirect } from "next/navigation";
 
-import Link from "next/link";
-import { ArrowUpRight, MoreHorizontal } from "lucide-react";
-
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -16,24 +11,19 @@ import {
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Image from "next/image";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { auth } from "@/auth";
-import { transactions } from "@/lib/schema";
-import { getTransactionsByUserId } from "@/lib/drizzle";
+import {
+  getAccountsByUserId,
+  getCategoriesByUserId,
+  getTransactionsByUserId,
+} from "@/server/queries";
 import TransactionItem from "@/components/dashboard/transaction-item";
 import AddTransactionPopup from "./_components/add-transaction-popup";
+import { TransactionPagination } from "./_components/pagination";
 
 export default async function Dashboard() {
   const session = await auth();
@@ -43,7 +33,8 @@ export default async function Dashboard() {
   }
 
   const transactions = await getTransactionsByUserId(session.user.id ?? "");
-
+  const accounts = await getAccountsByUserId(session.user.id ?? "");
+  const categories = await getCategoriesByUserId(session.user.id ?? "");
   return (
     <Card>
       <CardHeader>
@@ -53,7 +44,11 @@ export default async function Dashboard() {
             <CardDescription>List of your transactions.</CardDescription>
           </div>
           <div>
-            <AddTransactionPopup userId={session.user.id ?? ""} />
+            <AddTransactionPopup
+              userId={session.user.id}
+              accounts={accounts}
+              categories={categories}
+            />
           </div>
         </div>
       </CardHeader>
@@ -62,12 +57,11 @@ export default async function Dashboard() {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>Category</TableHead>
               <TableHead>Price</TableHead>
-              <TableHead className="hidden md:table-cell">
-                Total Sales
-              </TableHead>
+              <TableHead className="hidden md:table-cell">Account</TableHead>
               <TableHead className="hidden md:table-cell">Created at</TableHead>
+              <TableHead className="hidden md:table-cell">Type</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
               </TableHead>
@@ -76,22 +70,16 @@ export default async function Dashboard() {
           <TableBody>
             {transactions &&
               transactions.map((trx, idx) => {
-                return (
-                  <TransactionItem
-                    name={trx.name!}
-                    key={`trx-${trx.id}-${idx}`}
-                    date={trx.date!}
-                    price={trx.price!}
-                  />
-                );
+                return <TransactionItem transaction={trx} key={idx} />;
               })}
           </TableBody>
         </Table>
       </CardContent>
       <CardFooter>
-        <div className="text-xs text-muted-foreground">
+        {/* <div className="text-xs text-muted-foreground">
           Showing <strong>1-10</strong> of <strong>32</strong> products
-        </div>
+        </div> */}
+        {/* <TransactionPagination /> */}
       </CardFooter>
     </Card>
   );

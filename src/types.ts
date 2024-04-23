@@ -1,4 +1,4 @@
-import { transactions } from "./lib/schema";
+import { transactions } from "@/server/db/schema";
 
 export type SideNavItem = {
   title: string;
@@ -8,4 +8,24 @@ export type SideNavItem = {
   subMenuItems?: SideNavItem[];
 };
 
-export type Transactions = (typeof transactions.$inferInsert)[];
+// export type Transaction = typeof transactions.$inferInsert;
+export type Transaction = {
+  name: string;
+  id: number;
+  date: Date;
+  price: string;
+  category: string;
+  account: string;
+  type: "Expense" | "Income";
+};
+
+export type Category = {
+  name: string;
+  type: "Expense" | "Income";
+  id: number;
+};
+
+export type Account = {
+  name: string;
+  id: number;
+};

@@ -33,6 +33,11 @@ body,
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
+    --income: 116, 100%, 75%;
+    --income-foreground: 116, 100%, 27%;
+
+    --expense: 360, 100%, 64%;
+    --expense-foreground: 360, 100%, 36%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;

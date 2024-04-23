@@ -9,17 +9,17 @@ export const SIDENAV_ITEMS: SideNavItem[] = [
   },
   {
     title: "Stats",
-    path: "/stats",
+    path: "/dashboard/stats",
     icon: <IoMdStats className="w-6 h-6" />,
   },
   {
     title: "Settings",
-    path: "/settings",
+    path: "/dashboard/settings",
     icon: <IoMdPeople className="w-6 h-6" />,
     submenu: true,
     subMenuItems: [
-      { title: "Accounts", path: "/settings/accounts" },
-      { title: "Categories", path: "/settings/categories" },
+      { title: "Accounts", path: "/dashboard/settings/accounts" },
+      { title: "Categories", path: "/dashboard/settings/categories" },
     ],
   },
 ];

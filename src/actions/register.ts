@@ -2,8 +2,9 @@
 import { z } from "zod";
 
 import { RegisterSchema } from "@/schemas";
-import db, { getUserByEmail } from "@/lib/drizzle";
-import { users } from "@/lib/schema";
+import db from "@/server/db";
+import { getUserByEmail } from "@/server/queries";
+import { users } from "@/server/db/schema";
 import { createId } from "@paralleldrive/cuid2";
 
 import bcrypt from "bcryptjs";

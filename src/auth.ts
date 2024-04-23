@@ -3,11 +3,12 @@ import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import db, { getUserByEmail } from "@/lib/drizzle";
+import db from "@/server/db";
+import { getUserByEmail } from "@/server/queries";
 import { LoginSchema } from "@/schemas";
 
 import bcrypt from "bcryptjs";
-import { users } from "@/lib/schema";
+import { users } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({

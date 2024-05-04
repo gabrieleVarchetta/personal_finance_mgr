@@ -42,7 +42,7 @@ export default function AddTransactionForm({
 }: {
   userId: string | undefined;
   accounts: Account[] | null;
-  categories: Category[] | null;
+  categories: Category[] | undefined;
   type: "Income" | "Expense";
 }) {
   const [success, setSuccess] = useState<string>("");

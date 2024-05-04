@@ -28,4 +28,6 @@ export type Category = {
 export type Account = {
   name: string;
   id: number;
+  type: "Investments" | "Cash" | "Bank Accounts";
+  amount: string;
 };

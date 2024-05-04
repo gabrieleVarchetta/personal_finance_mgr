@@ -21,7 +21,7 @@ export const users = pgTable("user", {
 export const accounts = pgTable(
   "account",
   {
-    userId: text("userId")
+    userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     type: text("type").$type<AdapterAccount["type"]>().notNull(),
@@ -46,9 +46,18 @@ export const moneyAccounts = pgTable("moneyaccount", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
-  userId: text("userId")
+  userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  type: text("type", {
+    enum: ["Investments", "Cash", "Bank Accounts"],
+  }).notNull(),
+  amount: decimal("amount", {
+    precision: 11,
+    scale: 2,
+  })
+    .notNull()
+    .default("0"),
 });
 
 export const categories = pgTable("category", {
@@ -56,7 +65,7 @@ export const categories = pgTable("category", {
   name: text("name").notNull(),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
   type: text("type", { enum: ["Expense", "Income"] }).notNull(),
-  userId: text("userId")
+  userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
 });
@@ -69,7 +78,7 @@ export const transactions = pgTable("transaction", {
     scale: 2,
   }).notNull(),
   date: timestamp("date", { mode: "date" }),
-  userId: text("userId")
+  userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   type: text("type", { enum: ["Expense", "Income", "Transfer"] }),

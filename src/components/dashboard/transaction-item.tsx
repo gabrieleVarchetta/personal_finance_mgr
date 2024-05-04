@@ -26,14 +26,25 @@ export default function TransactionItem({ transaction }: TransactionItemProps) {
       <TableCell>
         <Badge variant="outline">{transaction.category}</Badge>
       </TableCell>
-      <TableCell>${transaction.price}</TableCell>
+      <TableCell>
+        {(transaction.type === "Expense" ? "-" : "+") + transaction.price}$
+      </TableCell>
       <TableCell className="hidden md:table-cell">
         {transaction.account}
       </TableCell>
       <TableCell className="hidden md:table-cell">
         {transaction.date.toDateString()}
       </TableCell>
-      <TableCell className="hidden md:table-cell">{transaction.type}</TableCell>
+      <TableCell className="hidden md:table-cell">
+        <Badge
+          variant="outline"
+          className={
+            transaction.type === "Expense" ? "bg-expense" : "bg-income"
+          }
+        >
+          {transaction.type}
+        </Badge>
+      </TableCell>
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

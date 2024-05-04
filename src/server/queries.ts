@@ -1,5 +1,5 @@
 import * as schema from "./db/schema";
-import { desc, eq, sum } from "drizzle-orm";
+import { and, desc, eq, sum } from "drizzle-orm";
 import { Account, Category, Transaction } from "@/types";
 import db from "./db/index";
 
@@ -38,6 +38,7 @@ export async function getTransactionsByUserId(id: string) {
         price: schema.transactions.price,
         category: schema.transactions.categoryName,
         account: schema.transactions.moneyAccountName,
+        type: schema.transactions.type,
       })
       .from(schema.transactions)
       .where(eq(schema.transactions.userId, id))
@@ -51,14 +52,17 @@ export async function getTransactionsByUserId(id: string) {
 
 export async function getTotalSpentByUserId(id: string) {
   try {
+    console.log("uela");
     const res = await db
       .select({
         total: sum(schema.transactions.price),
       })
       .from(schema.transactions)
       .where(
-        eq(schema.transactions.userId, id) &&
+        and(
+          eq(schema.transactions.userId, id),
           eq(schema.transactions.type, "Expense")
+        )
       );
     return res[0].total != null ? res[0].total : "0";
   } catch {
@@ -74,8 +78,10 @@ export async function getTotalEarnedByUserId(id: string) {
       })
       .from(schema.transactions)
       .where(
-        eq(schema.transactions.userId, id) &&
+        and(
+          eq(schema.transactions.userId, id),
           eq(schema.transactions.type, "Income")
+        )
       );
     return res[0].total != null ? res[0].total : "0";
   } catch {
@@ -89,6 +95,8 @@ export async function getAccountsByUserId(id: string) {
       .select({
         name: schema.moneyAccounts.name,
         id: schema.moneyAccounts.id,
+        type: schema.moneyAccounts.type,
+        amount: schema.moneyAccounts.amount,
       })
       .from(schema.moneyAccounts);
 
@@ -124,3 +132,75 @@ export async function deleteTransactionById(id: number) {
 }
 
 export async function updateTransactionById(id: number) {}
+
+export async function updateMoneyAccountAmount(
+  accountId: number,
+  trxAmount: string,
+  transactionType: "Income" | "Expense"
+) {
+  const accAmount = await getMoneyAccountAmountById(accountId);
+
+  try {
+    if (transactionType === "Income") {
+      await db
+        .update(schema.moneyAccounts)
+        .set({
+          amount: (parseFloat(accAmount!) + parseFloat(trxAmount)).toString(),
+        })
+        .where(eq(schema.moneyAccounts.id, accountId));
+    } else {
+      await db
+        .update(schema.moneyAccounts)
+        .set({
+          amount: (parseFloat(accAmount!) - parseFloat(trxAmount)).toString(),
+        })
+        .where(eq(schema.moneyAccounts.id, accountId));
+    }
+  } catch (err) {
+    return { error: err };
+  }
+}
+
+export async function getMoneyAccountAmountById(accountId: number) {
+  try {
+    const res = await db
+      .select({
+        amount: schema.moneyAccounts.amount,
+      })
+      .from(schema.moneyAccounts)
+      .where(eq(schema.moneyAccounts.id, accountId));
+
+    return res[0].amount;
+  } catch {
+    return null;
+  }
+}
+
+export async function getTotalAmountPerAccountByUserId(userId: string) {
+  try {
+    const res = await db
+      .select({
+        total: sum(schema.moneyAccounts.amount),
+        type: schema.moneyAccounts.type,
+      })
+      .from(schema.moneyAccounts)
+      .where(eq(schema.moneyAccounts.userId, userId))
+      .groupBy(schema.moneyAccounts.type);
+
+    const resultObject: Record<string, string | null> = {}; // Define an empty object
+
+    // Loop through the result array and construct the object
+    res.forEach(
+      (item: {
+        total: string | null;
+        type: "Investments" | "Cash" | "Bank Accounts";
+      }) => {
+        resultObject[item.type] = item.total; // Assigning type as key and total as value
+      }
+    );
+    console.log(resultObject);
+    return resultObject;
+  } catch {
+    return null;
+  }
+}

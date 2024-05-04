@@ -1,7 +1,10 @@
 "use server";
 
 import db from "@/server/db";
-import { deleteTransactionById } from "@/server/queries";
+import {
+  deleteTransactionById,
+  updateMoneyAccountAmount,
+} from "@/server/queries";
 import { transactions } from "@/server/db/schema";
 import { TransactionSchema } from "@/schemas";
 import { revalidatePath } from "next/cache";
@@ -23,7 +26,6 @@ export async function addTransaction(
   const { name, price, account, category } = validatedFields.data;
 
   try {
-    console.log(type);
     await db.insert(transactions).values({
       name,
       price,
@@ -36,9 +38,11 @@ export async function addTransaction(
       type,
     });
 
+    await updateMoneyAccountAmount(accountId, price, type);
     revalidatePath("/dashboard");
     return { message: "Transaction added successfully" };
-  } catch {
+  } catch (err) {
+    console.log(err);
     return { error: "Something went wrong" };
   }
 }

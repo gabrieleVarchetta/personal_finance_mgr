@@ -41,7 +41,7 @@ export default function AddTransactionPopup({
           <TabsContent value="expense">
             <AddTransactionForm
               userId={userId}
-              categories={categories}
+              categories={categories?.filter((cat) => cat.type === "Expense")}
               accounts={accounts}
               type="Expense"
             />
@@ -49,7 +49,7 @@ export default function AddTransactionPopup({
           <TabsContent value="income">
             <AddTransactionForm
               userId={userId}
-              categories={categories}
+              categories={categories?.filter((cat) => cat.type === "Income")}
               accounts={accounts}
               type="Income"
             />

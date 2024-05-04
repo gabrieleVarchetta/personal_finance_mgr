@@ -23,3 +23,6 @@ export const SIDENAV_ITEMS: SideNavItem[] = [
     ],
   },
 ];
+
+// se volete capire il as const https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#const-assertions
+export const ACCOUNT_TYPES = ["Investments", "Cash", "Bank Accounts"] as const;
